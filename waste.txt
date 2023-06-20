@@ -1,0 +1,367 @@
+ cat Dockerfile
+FROM tomcat:latest
+WORKDIR /usr/local/tomcat/webapps/
+COPY */ABCtechnologies-1.0.war /usr/local/tomcat/webapps/
+EXPOSE 8090
+CMD ["/usr/local/tomcat/bin/catalina.sh", "run"]
+===================================================================================
+ansible-playbook -i inventory.ini build.yml
+cat build.yml
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: create build directory
+      file:
+        path: /root/demo-dockerfile
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+    - name: copy Dockerfile
+      copy:
+        src: ./Dockerfile
+        dest: /root/demo-dockerfile/Dockerfile
+        owner: root
+        group: root
+        mode: '0644'
+    - name: build container image
+      docker_image:
+        name: abctechnologies:v1.0
+        build:
+          path: /root/demo-dockerfile
+          source: build
+        state: present
+==================================================================================
+ansible-playbook -i inventory.ini save.yml
+cat save.yml
+---
+- hosts: localhost
+  gather_facts: no
+  tasks:
+    - name: archive container image as a tarball
+      docker_image:
+        name: abctechnologies:v1.0
+        archive_path: /root/abctechnologies_v1_0.tar
+        source: pull
+        state: present
+    - name: fetch archived image
+      fetch:
+        src: /root/abctechnologies_v1_0.tar
+        dest: ./abctechnologies_v1_0.tar
+        flat: true
+===================================================================================
+ansible-playbook -i inventory.ini load.yml
+cat load.yml
+---
+- hosts: docker_hosts
+  gather_facts: no
+  tasks:
+    - name: copy tarball to host
+      copy:
+        src: ./abctechnologies_v1_0.tar
+        dest: /root/abctechnologies_v1_0.tar
+
+    - name: load container from tarball
+      docker_image:
+        name: abctechnologies_v1_0.tar
+        load_path: /root/abctechnologies_v1_0.tar
+        state: present
+        source: load
+docker run --rm -it -p 8080:8080 democontainer:v1.0
+===================================================================================
+sudo groupadd docker
+sudo usermod -aG docker ${USER}
+su -s ${USER}
+docker run hello-world
+/var/run$ ls -lrth docker.sock
+sudo chmod 666 /var/run/docker.sock
+docker run hello-world
+===================================================================================
+deployement.yml
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubeserve
+spec:
+  replicas: 10
+  minReadySeconds: 45 # wait for 10 sec before pod is ready going to next
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1  # take down 1 pod at a time
+      maxSurge: 2        # bring one at a time
+  selector:
+    matchLabels:
+      app: kubeserve
+  template:
+    metadata:
+      name: kubeserve
+      labels:
+        app: kubeserve
+    spec:
+      containers:
+      - image: nareshdt99/abctechnologies-1.0
+        name: app
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+   name: kubeserve-svc
+spec:
+  type: NodePort
+  selector:
+    app: kubeserve
+  ports:
+    - port: 80
+      targetPort: 8080
+
+
+
+git init
+git add README.md
+git commit -m "first commit"
+git branch -M main
+git remote add origin https://github.com/nareshdt99/ad.git
+git push -u origin main
+
+FROM tomcat:8.5.50
+WORKDIR /usr/local/tomcat/webapps/
+COPY */ABCtechnologies-1.0.war /usr/local/tomcat/webapps/
+EXPOSE 8090
+CMD ["/usr/local/tomcat/bin/catalina.sh", "run"]
+
+stage('build docker image'){
+        steps {
+            sh 'echo stage5'
+            sh 'docker build -t nareshdt99/abctechnologies-1.0 .'    
+        }                    
+    }
+    stage('push docker image to dockerhub'){
+        steps {
+            sh 'echo stage6'
+            withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
+            sh 'docker login -u nareshdt99 -p ${dockerhub}'  
+            } 
+            sh 'docker push nareshdt99/abctechnologies-1.0'  
+        }                    
+    }
+=================================================================================
+---
+- hosts: build_host
+  gather_facts: no
+  tasks:
+    - name: create build directory
+      file:
+        path: /root/demo-dockerfile
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+    - name: copy Dockerfile
+      copy:
+        src: ./Dockerfile
+        dest: /root/demo-dockerfile/Dockerfile
+        owner: root
+        group: root
+        mode: '0644'
+    - name: build container image
+      docker_image:
+        name: democontainer:v1.0
+        build:
+          path: /root/demo-dockerfile
+          source: build
+        state: present
+   - name: archive container image as a tarball
+      docker_image:
+        name: democontainer:v1.0
+        archive_path: /root/democontainer_v1_0.tar
+        source: pull
+        state: present
+   - name: fetch archived image
+      fetch:
+        src: /root/democontainer_v1_0.tar
+        dest: ./democontainer_v1_0.tar
+        flat: true
+   - name: copy tarball to host
+      copy:
+        src: ./democontainer_v1_0.tar
+        dest: /root/democontainer_v1_0.tar
+
+   - name: load container from tarball
+      docker_image:
+        name: democontainer:v1.0
+        load_path: /root/democontainer_v1_0.tar
+        state: present
+        source: load
+
+- name: build container image
+      docker_image:
+        name: democontainer:v1.0
+        source: build
+        build:
+            path: /root/demo-dockerfile
+        force: yes
+
+---
+- hosts: localhost
+  gather_facts: no
+  become: yes
+  vars:
+    ansible_python_interpreter: /bin/python3
+  tasks:
+    - name: create build directory
+      file:
+        path: /root/demo-dockerfile
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+    - name: copy Dockerfile
+      copy:
+        src: ./Dockerfile
+        dest: /root/demo-dockerfile/Dockerfile
+        owner: root
+        group: root
+        mode: '0644'
+    - name: build container image
+      docker_image:
+        name: democontainer:v1.0
+        source: build
+        build:
+            path: /root/demo-dockerfile
+        force: yes
+~
+
+pipeline {
+  agent any
+  stages {
+    stage('checkout-scm'){
+        steps {
+            sh 'echo stage1'
+            git branch: 'main', url: 'https://github.com/nareshdt99/mainproject.git'
+        }
+    }
+    stage('compile'){
+        steps {
+            sh 'echo stage2'
+            sh '/opt/maven/bin/mvn compile'
+        }
+    }    
+    stage('test'){
+        steps {
+            sh 'echo stage3'
+            sh '/opt/maven/bin/mvn test'   
+        }
+        
+    }              
+    stage('package'){
+        steps {
+            sh 'echo stage4'
+            sh '/opt/maven/bin/mvn package' 
+        }
+    } 
+    stage('build docker image'){
+        steps {
+            sh 'echo stage5'
+            sh 'docker build -t nareshdt99/abctechnologies-1.0 .'    
+        }                    
+    }
+    stage('push docker image to dockerhub'){
+        steps {
+            sh 'echo stage6'
+            sh 'docker run -d -P nareshdt99/abctechnologies-1.0'  
+            sh 'docker ps' 
+        }                    
+    }
+  }  
+}
+==================================================================================
+pipeline {
+    agent none
+    stages {
+        stage('Code Checkout'){
+            agent { label 'mvn-jdk11' }
+            steps{
+                echo "code checkout from [${branch}] branch"
+                git ( url: 'https://github.com/infer-ai/titan-key-value-pair.git' ,credentialsId: 'Build-User', branch: "${branch}")
+            }
+        }
+        stage('Build titan-key-value-pair docker image'){
+            
+            agent { label 'mvn-jdk11' }
+            steps{
+                echo "Building the project and tagging as ${project}:${BUILD_NUMBER}"
+                sh '''
+                docker build -t muffin-maker.infrrd.ai/titan-sn-dev/app/${project}:${BUILD_NUMBER} .
+                if [ $? -eq 0 ]
+                then
+                    echo "Docker image build is success"
+                else
+                    echo "Docker image build is failed"
+                    exit 1
+                fi                
+                
+                docker push muffin-maker.infrrd.ai/titan-sn-dev/app/${project}:${BUILD_NUMBER}
+                if [ $? -eq 0 ]
+                then
+                    echo "Nexus build is success"
+                else
+                    echo "Nexus build is failed"
+                    exit 1
+                fi
+                docker rmi muffin-maker.infrrd.ai/titan-sn-dev/app/${project}:${BUILD_NUMBER}
+                '''
+                
+            }
+        }
+          stage('updating image tag argocd') {
+            agent { label 'mvn-jdk11' }
+            steps {
+                script {
+                    git ( url: 'https://github.com/infer-ai/state-national-result-translator.git',credentialsId: 'Build-User', branch: "onprem-sn-dev")
+                    withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId: 'git-repo-update-image-tag', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {                        
+                        sh '''
+                        cd ${project}
+                        EXISTING_TAG=$(cat ${project}-dep.yaml | grep image: | cut -d":" -f3)
+                        LINE_NUMBER=$(cat ${project}-dep.yaml | grep -n image: | cut -d ":" -f1)
+                        sed -i ''"${LINE_NUMBER}"'s/'"${EXISTING_TAG}"'/'"${BUILD_NUMBER}"'/g' ${project}-dep.yaml
+                        git commit -am 'updating image tag'
+                        git push https://${USERNAME}:${PASSWORD}@github.com/infer-ai/sre-workbook-titan-non-prod-deployments.git onprem-sn-dev
+                        '''
+                    }
+                }
+            }
+        
+        } 
+        
+
+    } 
+   
+       
+}
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+   name: kubeserve-svc
+spec:
+  type: NodePort
+  selector:
+    app: kubeserve
+  ports:
+    - port: 8080
+      targetPort: 8080
+..
+
+- name: install Pod network
+      become: yes
+      become_user: jenkins
+      shell: kubectl apply -f https://raw.githubusercontent.com/nareshdt99/mainproject/main/kube-deployment.yml
+      args:
+        chdir: $HOME
+
+sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 1
