@@ -1,0 +1,44 @@
+resume
+
+Career Summary
+1. I have 5 years of experience as a project management Team lead 
+2. People management, worked with devops tools interacting with devops team and data analysit team also worked with CI-CD Pipeline.in the process i have Learnt all devops tools
+3.aCdemic pedigree (engineer with Pg Diploma in devops)
+
+
+professional experience
+Project manaement Team Lead
+cloud migration (gcp,aws)
+ci-cd pipeline
+
+awards&recognition
+best team lead for 3 consugative quarters
+
+certification
+pgp devops from egureca
+aws certificcation by edureca
+gcp 
+
+skills
+team managent
+automation using ansible and dockers and kuberneties
+scripting skills:
+ymal, go languange
+clound skills:
+aws cloud, gcp cloud
+security skills:
+
+academic/live projets
+industry grade project (str aim, method, result)
+
+aim to build deployable file from piece of code which is written in java etc etc
+hl2 devlopment with 3k resource and maintencance and monitering
+
+
+academuic qualification
+education qualification
+
+extra curricular activities
+saha
+teaching
+

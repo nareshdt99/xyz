@@ -1,0 +1,501 @@
+git 
+
+scm (source code management)
+
+work dir>stage/index> local rep (branch)
+
+why git
+1. speed
+bacup -incremental (consumes less storage)
+2. parallel branching
+3. fully distributed
+
+git is called distributed version control system
+
+practice
+
+yum install git -y
+
+which git
+
+git --version
+
+git config --global user.name "naresh"
+git config --global user.email "nareshdt99@gmail.com"
+git congig --list
+
+
+go to mumbai server
+
+makdir mumbaigit
+ls
+cd mumbaigit/
+
+git init
+
+pwd
+ls-a
+
+vi myfile
+
+to see sttus of file : git status
+
+sending file from workspace to staging area (add)
+git add . (. all files)
+
+sending file from stage to staging arealocal repo (commit)
+
+git commit -m "1st commit from mumbai"
+git status
+
+ls -a
+
+git log
+
+git show first 7 charetors  
+
+adding central repo to local repo
+
+
+git remote add origin https://github.com/nareshdt99/naresh.git
+
+git branch -M main
+
+git branch
+
+git push -u origin main 
+
+
+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 new key
+
+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
+
+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
+
+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
+
+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
+
+
+1.gitignore
+
+vi .gitignore 
+*.class
+
+2.git log to check commits
+
+git log --oneline
+
+3. git log --grep "london"
+
+4. git show
+
+branch
+
+git branch 
+git log --oneline
+
+creating new branch 
+git branch new
+ to verify git branch
+
+to change default braanch 
+git checkout new
+to check git branch
+
+
+merging 
+-> pull,copy,paste
+
+git branch (main) since pull 
+
+git log --oneline
+
+git merge new
+
+git log --oneline
+
+pushing
+git push origin main 
+ give credentials of github 
+
+go to github and verify 
+
+
+merge conflict 
+1.when two branches are having same file name  but diff content in it
+->when we merge conflict occurs 
+
+git branch    -main
+vi file1 (hi)
+git add .
+git commit -m ""
+
+git checkout new
+vi file1 (hello)
+git add .
+got commit -m ""
+
+merge
+git checkout main (supoose to be in main)
+
+git merge new
+
+conflict arises
+
+then 
+vi file1
+it shows error 
+
+change or modify as per wish 
+
+git add .
+git commit -m "fixed conflict"
+
+ls
+
+git log --oneline
+
+git show 123345
+
+
+add mutiple users to the group 
+useradd file1
+useradd file2
+groupadd devops
+
+vi /etc/group
+
+addd users manually , by pressing i
+
+
+,
+creating directoty and file in it and pushing to central repo
+makdir demodir
+touch demodir/file1
+ls demodir/
+git status
+git add.
+git commit -m ""
+
+git push origin main
+
+credentials 
+
+lecture-5
+git stash (temp storage inside repo)
+
+ls
+touch testfile
+ls
+git add .
+git commit -m "testfile"
+
+vi testfile 
+task A(BLUE COLOR(50%))
+:WQ!
+Cat testfile
+git stash (data moved to statch temp storage)
+cat testfile (empty)
+
+vi testfile
+task b(pink color(50%))
+:wq!
+cat testfile
+git stash (data moved to statch temp storage)
+cat testfile (empty)
+
+
+git stash list
+storage numbering
+latest one(0), follwed by 1,2,23,...
+
+bring old data (1)
+git stash apply stash@{1}
+
+vi testfile
+add some more data
+after adding
+task A(BLUE COLOR(100%))
+git add .
+git commit -m "finished blue task"
+
+now bringing pink to workspace, conflict occurs (then need to erase blue data manually )
+
+git stash apply stash @{)}
+
+conflict
+
+vi testfile 
+(remove manually )
+task b(pink color(100%))
+git aadd .
+git commit -m "finishedpink task"
+
+moving file from workspace to stash (cut paste)
+moving file from stash to workspace(copy paste)
+**still files exist in stash**
+git stash clear
+git stash list
+
+
+Reset & Change
+after adding to add, to statge area find bug 
+git reset used
+
+vi nareshfile
+hello hnaresh
+git add .
+git status
+cat naresh (found mistake)(bring snapshot back)
+git reset . or filename
+git status
+this works only before commit
+
+to remove snapshot also workspace file
+git reset --hard
+wont find nareshfile
+
+
+wt if it happens after commit
+git revert
+vi nareshfile
+this is my //code
+git add .
+git commit -m "my latest code"
+cat nareshfile (found // in code)
+git revert commitid
+
+file deleted from workspace, file deleted from staging area,
+sends new dommit , by saying previous commit
+
+git log --oneline
+git revert commitid(I545555)
+
+git log --oneline
+
+
+removing files (already added & commited files)
+2 methods 
+1. rm -rf (linux)
+2.git rm filename (git)
+if we remove file from workspace it by auto removes same file from staging area
+git commit -m "deleting file"
+
+git log --oneline
+
+send it to cental repo
+git push origin main
+enter credentials
+
+remove untracked file (file is in only workspace ,not added neither commited)
+
+create 100 files
+touch {1..100)
+git status (redone)
+
+git clean -n (dry run)
+git clean -f (forcefully)
+
+
+lec-6
+
+tag 
+get into repo
+git log --oneline
+
+git tag -a test -m "my imp commit" commit id(65456156)
+
+test tag is assigned to commit id
+
+git tag 
+
+git tag --oneline
+
+to check 
+git show test
+
+to delete atg 
+git tag -d test
+to check
+git log --oneline
+
+
+clone
+git clone (central repo code)
+
+
+to work in central repo directly 
+github 
+to merge two branches in central repo need to do 2 tasks
+1.create pull request
+compare and pull request,create pull request
+2.merge pull request
+
+delete branch (go to branchs and dlete it)
+git branch -d new
+git branch 
+
+thumb rule: always need to pull first , thrn need to push 
+
+
+to push one branch from local dir to onother btanch in central repo
+local repo >branch name is naresh
+central repo > branch name is pragya
+to push content in naresh branch to pragya branch 
+git push origin naresh:pragya
+
+lets pull pragya branch to local main branch
+git checkout main
+git pull origin pragya:main
+
+push content from local main to central main
+
+git push origin main:main (local repo:central repo)
+
+
+
+mutliple teams work scenario
+
+team a,b,c are local repos , teamx is central repo
+
+push -through error (need to do pull first due to extra added content in it)
+pull- conflict occues  (need to cahne)
+then push
+
+
+lec-7
+github
+working on private repo in github
+
+public -while pushing need to give credentials, while pulling no credentals are needed
+private- while pulling and pushing credentials are needed
+
+hw to avoid credentials
+ssh -keygen 
+cd ..
+pwd
+
+ls -a
+can find  .ssh
+cd .ssh
+cat id_rsa.pub
+copy content in git hub
+
+go to setting and ssh keys add it
+
+
+git on windows
+
+real time scenarios 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

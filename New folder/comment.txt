@@ -1,0 +1,31 @@
+/drives/c/users/nares/downloads 
+ansible -i hosts all -m shell -a "hostname" --limit 'servername'
+
+ansible -i myinv dev -m shell -a "hostname" --!limit 'server name'
+
+Its apparent that you tried your best to reach target , however you were reached near to the target,missed target with little margin ,expecting better performance in comming days.
+
+It is apparent that you have continued to meet  and exceed your job expectations.you have made some significant contributions, which have had a positive impact on the performance of our overall team.
+
+its apparent that cumulative of 4 weeks performance overall is not up to the mark and require more efforts to hit 100% target in the month of May. 
+
+TL Report: May month overall 5 weeks performance
+
+it is aperent that your cumilative active time is lessthan 6:30 hrs, try to improve it in this week.
+not meeting required actives hours leads to LOP of that perticular day.
+
+
+i appricitae that you have maintained 6:30 hr minimum active time in all 4 cumilative weeks. pls continue same in the future
+
+
+ngvpn-dft-02.vpn.nvidia.com/SAML
+
+TL Report: September month overall  performance
+
+TL Report: September month overall 4 week's performance
+
+83.03
+84.23
+86.39
+
+

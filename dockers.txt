@@ -1,0 +1,718 @@
+docker image: is the softwere package that sits on your disk doing ntng cosuming the disk softwere
+container: package that has an app+ dependencies 
+====================================================================================
+    2  docker -v
+    3  sudo apt-get remove docker docker-engine docker.io containerd runc
+    4  sudo apt-get update
+    5  sudo apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+    6  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+    7  sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+    8  sudo apt-get update
+    9  sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+sudo dpkg --configure docker-ce
+====================================================================================
+   19  docker ps
+   20  sudo docker ps
+   21  sudo usermod -aG docker devops
+   27  docker image ls
+   28  docker pull tomcat:jre11-openjdk
+   29  docker pull tomcat
+   30  docker pull docker.io/library/jenkins
+   31  docker pull docker.io/library/jenkins:2.60.3-alpine
+   56  docker container run tomcat:latest
+   57  clear
+   58  docker container run -d tomcat:latest
+   59  docker container run -d nginx:latest
+   60  docker image ls
+   61  docker container run -d nginx:latest
+   70  docker container stop 65b731b6b471 ddf5bf141e66 55d7d5133967
+   71  docker container ps -a
+   72  docker container start 65b731b6b471 ddf5bf141e66 55d7d5133967
+   73  docker container ps -a
+   74  docker container restart 65b731b6b471 ddf5bf141e66 55d7d5133967
+   75  docker container kill 65b731b6b471 ddf5bf141e66 55d7d5133967
+   76  docker container ps -a
+   77  docker container start 65b731b6b471 ddf5bf141e66 55d7d5133967
+   78  docker container ps -a
+   91  docker container logs b6a611b53cee
+   92  docker container logs ec32a85a3b3e
+   93  history
+   94  docker container ps
+   95  docker container inspect 6269ca258d58
+   96  curl 172.17.0.3:8080
+===================================================================================
+day2:
+observation: 
+-P is for assinging nodeport to access application ,
+docker will generate some random port number ex 49153
+-p(small) we can assign node port on our own nodeport: containerport
+how to find container port :
+docker container inspect container id
+====================================================================================
+logging in to container:
+exec -it : we use it to interact with terminal, /bin/bash to invoke program
+i=interactive ,t=terminal
+
+docker exec -it container_id /bin/bash
+
+also can deploy war to tomcat container but its not recomemded but its doable.
+docker cp sampleapp.war container_id:/usr/local/tomcat/webapps 
+====================================================================================
+to limit the resource 
+ docker run -d -P --memory-reservation 128M --memory 256M --cpus "0.5" tomcat:latest
+docker logs 
+docker inspect 
+docker stats 
+docker container update --help
+==================================================================================
+remove all container all at once 
+docker rm -f `docker ps -aq`
+=================================================================================
+create docker image by 2 process
+================================
+1. is from existing image , modify using exec and perform docker commit -m 
+"any msg" cont_id new image name:tag
+=================================================================================
+2. create from scrap
+vi Dockerfile
+FROM tomcat:8.5.50
+RUN apt-get update && apt-get install -y vim
+RUN touch /tmp/abc.txt
+RUN wget https://github.com/lerndevops/code/raw/main/sampleapp.war -P /usr/local/tomcat/webapps
+to build:
+docker build --file Dockerfile --tag myimage:v3 /home/devops
+
+push to docker hub :docker tag 39cd6fe0b62e nareshdt99/myimage:v3 && docker push nareshdt99/myimage:v3
+====================================================================================
+--file can be rapalced with -f
+--tag can be repalced with -t
+docker build -f mynginxdfile -t mynginx:v1 /home/devops
+
+mynginxfile 
+FROM centos:7
+
+RUN yum -y install epel-release
+RUN yum -y update
+RUN yum -y install nginx curl
+
+ENV NGINX_HOME /usr/sbin
+ENV MY_HOME /home
+# when we use the docker exec to login to cont this WORKDIR 
+# will be the landing dir otherwise by default it is /
+WORKDIR /usr/share/nginx/html
+RUN touch new.txt
+
+EXPOSE 80
+# ENTRYPOINT is same CMD 
+#ENTRYPOINT ["executable", "arg1"]
+ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]
+====================================================================================
+devops@master:~$ cat mytomcatdfile
+# FROM ubuntu:18.04
+FROM docker.io/library/ubuntu:18.04
+
+# COPY instruction copies the file as it is
+COPY jdk-8u331-linux-x64.tar.gz /tmp
+RUN tar -xzvf /tmp/jdk-8u331-linux-x64.tar.gz
+RUN mv jdk1.8.0_331 /opt/java
+
+ENV JAVA_HOME /opt/java
+
+#ADD instruction with tar it extracts the tar & copies the extracted content only
+ADD apache-tomcat-9.0.63.tar.gz /tmp
+RUN mv /tmp/apache-tomcat-9.0.63 /opt/tomcat
+
+ENV TOMCAT_HOME /opt/tomcat
+ENV TOMCAT_VERSION 9.0.63
+ENV JAVA_VERSION 1.8
+COPY myapp.war /opt/tomcat/webapps
+# ADD instruction can also download files from url & keep in cont
+ADD https://github.com/lerndevops/code/raw/main/sampleapp.war /opt/tomcat/webapps
+
+EXPOSE 8080
+#CMD ["executable", "arg1", "arg..n"]
+CMD ["/opt/tomcat/bin/catalina.sh", "run"]
+====================================================================================
+vi myapachedfile 
+FROM ubuntu:18.04
+RUN apt-get update
+RUN apt-get install -y apache2
+EXPOSE 80
+WORKDIR /usr/sbin
+CMD ["apachectl", "-D", "FOREGROUND"]
+====================================================================================
+**************************************
+multi statge build : not including unnecessary files/plugins/softweres
+
+vi multi-stage-build-dfile
+
+# stage1 is an alias name for build stage
+FROM maven:3.6.2-jdk-8 AS stage1   
+RUN git clone http://github.com/lerndevops/petclinic
+WORKDIR  /petclinic
+RUN mvn package
+
+FROM tomcat:8.5.40
+WORKDIR /usr/local/tomcat/webapps/
+# importing the .war from build stage
+COPY --from=stage1 /petclinic/target/petclinic.war .    
+
+##RUN git clone -b docker https://<token>:x-oauth-basic@github.com/username/myapp.git /myapp/       -----> for private repo
+
+to push to dockerhub
+docker push image id nareshdt99/image_name:version
+
+====================================================================================
+docker registry (local host)
+docker run -d -p 5000:5000 --restart always --name registry registry:2
+docker tag ubuntu:cmd localhost:5000/nareshdt99/ubuntu:cmd
+docker push localhost:5000/nareshdt99/ubuntu:cmd
+====================================================================================
+tranfer images offline from vm1 to vm2
+on vm1 (source)
+docker save --output myimages.tgz (registry:2, imageid:version, ...)
+then do scp myimages.tgz devops@ip:/tmp
+on vm2 (dest)
+docker load --input /tmp/myimages.tgz
+====================================================================================
+volumes:
+========
+making data persistent 
+
+to attach volume to container we use --mount
+
+docker run -d -P --mount type=volume,src=tlogs,target=/usr/local/tomcat/logs tomcat:latest
+or 
+docker run -d -P --volume tlogs:/usr/local/tomcat/logs tomcat:latest( other way of writing)
+
+https://github.com/nareshdt99/PetClinic
+
+/var/lib/jenkins/workspace/package/target/ABCtechnologies-1.0.war
+
+
+working one
+FROM tomcat:latest
+WORKDIR /usr/local/tomcat/webapps/
+COPY */ABCtechnologies-1.0.war /usr/local/tomcat/webapps/
+EXPOSE 8090
+CMD ["/usr/local/tomcat/bin/catalina.sh", "run"]
+====================================================================================
+default volume path : /var/lib/docker/volumes/
+/var/lib/docker/volumes/tlogs/_data ls -l 
+
+defalult tomcat path in docker image: /usr/local/tomcat/webapps or bin or  ....
+===================================================================================
+bindmount
+=========
+mapping custom path to a container called bindmount
+makdir nginxlogs
+/root/nginxlogs
+docker run -d -P --mount type=bind,src=/root/nginxlogs,target=/var/log/nginx
+nginx:latest
+
+or 
+docker run -d -P --volume /root/nginxlogs:/var/log/nginx nginx:latest
+
+-v (volume)
+ or
+docker run -d -P -v /root/nginxlogs:/var/log/nginx nginx:lates
+
+tail -f access.log
+
+docker image nginx file path /var/log/nginx
+====================================================================================
+tmpfs
+=====
+docker run -d -P --mount type=tmpfs,target=/var/log/nginx nginx:latest
+====================================================================================
+docker-compose
+==============
+to run multiple containers from given image
+
+docker-compose file to write yml fine
+dcoker-compose tool to execute compsoe file
+
+need to install docker compose tool
+sudo curl -L https://github.com/docker/compose/releases/download/1.29.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+docker-compose -version
+===================================================================================
+
+service: group of container run from single image
+
+dcoker-compose.yml
+
+version: "3.7"
+# user managed volumes / bind mounts can not be create using yaml here
+volumes: # docker managed volumes can be create from yaml
+  nconf:  # docker volume create nconf
+  mdata:
+services:
+  myapp:  # this is the service name / can be any string
+    image: nginx:latest
+    ports:
+      - 80       # -P option
+      #- 1234:80  # -p option
+    volumes:
+      - /root/nginxlogs:/var/log/nginx   # bind mount / custom or user managed volume
+      - nconf:/usr/share/nginx/html      # docker managed volume
+  mydb:
+    image: mongo:latest
+    ports:
+      - 27017
+    volumes:
+      - mdata:/data
+
+run it:
+docker-compose --file docker-compose.yml up -d
+
+to take down : 
+
+docker-compose --file docker-compose.yml down
+
+to scale:
+docker-compose --file docker-compose.yml up --scale myapp=4 --scale mydb=4 -d
+===================================================================================
+nareshdt99/petclinic
+
+151  docker network ls
+  152  docker network inspect bridge
+  153  clear
+  154  ifconfig
+  155  apt install net-tools
+  156  clear
+  157  ifconfig
+  158  docker run -d --name cont1 lerndevops/samples:netshoot
+  159  docker run -d --name cont2 lerndevops/samples:netshoot
+  160  docker ps
+  161  docker inspect cont1
+  162  ifconfig | grep -A 10 docker0
+  163  docker inspect cont2
+  164  clear
+  165  docker ps
+  166  docker exec cont1 ifconfig
+  167  docker exec cont2 ifconfig
+  168  clear
+  169  docker exec cont1 hostname -i
+  170  docker exec cont2 hostname -i
+  171  docker exec cont2 ping 172.17.0.2
+  172  docker exec cont1 ping 172.17.0.3
+  173  docker exec cont1 ping cont2
+  174  clear
+  175  docker network ls
+  176  docker network create --help
+  177  docker network create mynet --driver bridge --subnet 24.34.0.0/16 --gateway 24.34.0.1
+  178  docker network ls
+  179  docker network inspect mynet
+  180  clear
+  181  docker run -d --name cont3 --network mynet lerndevops/samples:netshoot
+  182  docker run -d --name cont4 --network mynet lerndevops/samples:netshoot
+  183  docker ps
+  184  docker inspect cont3
+  185  docker inspect cont4
+  186  clear
+  187  history
+  188  docker exec cont3 ifconfig
+  189  docker exec cont4 ifconfig
+  190  docker exec cont4 ping 24.34.0.2
+  191  docker exec cont3 ping 24.34.0.3
+  192  docker exec cont3 ping cont4
+  193  docker exec cont4 ping cont3
+  194  docker exec cont2 ping cont1
+  195  clear
+  196  docker exec cont1 hostname -i
+  197  docker exec cont2 hostname -i
+  198  docker exec cont3 hostname -i
+  199  docker exec cont4 hostname -i
+  200  docker exec cont4 ping 172.17.0.2
+  201  docker exec cont1 ping 24.34.0.2
+  202  docker exec cont1 ifconfig
+  203  docker network connect mynet cont1
+  204  docker exec cont1 ifconfig
+  205  docker exec cont1 ping cont3
+  206  docker exec cont1 ping cont4
+  207  docker network disconnect mynet cont1
+  208  docker exec cont1 ping cont4
+  209  docker exec cont1 ifconfig
+  210  history
+  211  clear
+  212  ls -l
+  213  cat docker-compose.yml
+  214  cat myapp.yml
+  215  docker-compose --file myapp.yml up -d
+  216  docker network ls
+  217  docker ps
+  218  docker exec -it 2a875f534066 /bin/bash
+  219  docker exec -it 2a875f534066 /bin/sh
+  220  clear
+  221  docker-compose --file myapp.yml down
+  222  docker ps
+  223  docker network ls
+  224  docker run -d --name cont5 --network none lerndevops/samples:netshoot
+  225  docker inspect cont5
+  226  docker exec cont5 ifconfig
+  227  docker network ls
+  228  ifconfig
+  229  clear
+  230  hostname -i
+  231  docker run -d --name cont6 --network host lerndevops/samples:netshoot
+  232  docker inspect cont6
+  233  clear
+  234  hostname -i
+  235  docker exec cont6 hostname -i
+  236  docker run -d nginx:latest
+  237  docker ps
+  238  docker run -d --network host nginx:latest
+  239  docker ps
+  240  docker exec cont1 hostname -i
+  241  docker ps
+  242  docker exec cont3 hostname -i
+  243  docker exec cont2 hostname -i
+  244  docker exec cont6 hostname -i
+  245  docker exec cont6 ping 172.17.0.3
+  246  docker exec cont6 ping 24.34.0.2
+  247  clear
+  248  docker info
+  249  clear
+===================================================================================
+Docker swarm
+============
+  250  docker swarm init
+  251  docker info | grep -i swarm
+  252  ps -ef|grep dockerd
+  253  netstat -anp | grep 2377
+  254  docker node ls
+  255  docker node inspect worker01
+  256  clear
+  257  docker node inspect master
+  258  clear
+  259  docker node ls
+  260  docker node ps worker01
+  261  docker node ps worker02
+  262  docker node ps master
+  263  docker ps
+  264  docker rm -f `docker ps -qa
+  265  docker rm -f `docker ps -qa`
+  266  docker ps
+  267  clear
+  268  history
+  269  clear
+  270  docker service create --name myapp --mode replicated --replicas 5 -p 9080:80 nginx:latest
+  271  docker service create --name pyapp --mode replicated --replicas 3 -p 9090:3000 lerndevops/samples:pyapp-v1
+  272  docker service ls
+  273  docker service ps myapp
+  274  docker service ps pyapp
+  275  docker node ps master
+  276  docker node ps worker01
+  277  docker node ps worker02
+  278  clear
+  279  docker service ls
+  280  docker service scale myapp=8
+  281  docker service ps myapp
+  282  docker service scale myapp=4
+  283  clear
+  284  docker service ls
+  285  docker service inspect myapp
+  286  clear
+  287  docker service ls
+  288  docker service rm myapp
+  289  docker service ls
+  290  history
+  291  clear
+  292  docker service ls
+  293  docker service scale pyapp=5
+  294  docker service ls
+  295  docker service ps pyapp
+  296  docker service ls
+  297  docker service ps pyapp
+  298  docker node ls
+  299  docker service ps pyapp
+  300  docker node ls
+  301  docker service ls
+  302  docker service scale pyapp 7
+  303  docker service scale pyapp=7
+  304  docker service ps pyapp
+====================================================================================
+netstat -anp | grep 9090
+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    (git pss) ,main project
+
+
+echo "JAVA_HOME=\"/usr/lib/jvm/java-11-openjdk-amd64\"" >> /etc/profile
+
+
+/usr/lib/jvm/java-11-openjdk-amd64
+=====================================================================================
+ 313  docker service logs pyapp -f
+  314  netstat -anp | grep 7878
+  315  netstat -anp | grep 9090
+  316  clear
+  317  docker service ls
+  318  docker service scale pyapp=10
+  319  docker service ls
+  320  docker service scale pyapp=2
+  321  docker service ls
+  322  clear
+  323  netstat -anp | grep 9090
+  324  history
+  325  clear
+  326  docker service create --name svcx --mode global -p 9080:80 nginx:latest
+  327  docker service ls
+  328  docker service ps svcx
+  329  docker service scale svcx=10
+  330  docker service ls
+  331  ls -l
+  332  cat docker-compose.yml
+  333  clear
+  334  vi compose.yml
+  335  clear
+  336  docker stack deploy -c compose.yml myapp
+  337  vi compose.yml
+  338  clear
+  339  docker stack deploy -c compose.yml myapp
+  340  docker stask ls
+  341  docker stack ls
+  342  docker stack --help
+  343  docker stack services myapp
+  344  docker stack ps myapp
+  345  docker stack rm myapp
+  346  cat compose.yml
+  347  history
+  348  docker stack --help
+  349  docker service --help
+  350  clear
+  351  docker service ls
+===================================================================================
+ vi wordpress.yml
+================
+version: "3.8"
+services:
+   db:
+     image: mysql:5.7
+     ports:
+       - 3306:3306
+     volumes:
+       - db_data:/var/lib/mysql
+     environment:
+       MYSQL_ROOT_PASSWORD: somewordpress
+       MYSQL_DATABASE: wordpress
+       MYSQL_USER: wordpress
+       MYSQL_PASSWORD: wordpress
+   wordpress:
+     depends_on:
+       - db
+     image: wordpress:latest
+     ports:
+       - "8000:80"
+     environment:
+       WORDPRESS_DB_HOST: db:3306
+       WORDPRESS_DB_USER: wordpress
+       WORDPRESS_DB_PASSWORD: wordpress
+volumes:
+    db_data
+
+docker stack deploy -c wordpress.yml wordpress
+===================================================================================
+javaapp.yml
+===========
+version: "3.8"
+volumes:
+  data:
+  data-bkp:
+networks:
+  myappnet:
+services:
+  springbootapp:
+    image: lerndevops/springboot-mongo-app:latest
+    deploy:
+      replicas: 2
+      placement:
+        constraints:
+          - node.labels.role==app
+          - node.role!=manager
+      restart_policy:
+        condition: on-failure
+      resources:
+        limits:
+          cpus: "0.1"
+          memory: 300M
+    ports:
+      - "9090:8080"
+    networks:
+      - myappnet
+    depends_on:
+      - mongo
+  mongo:
+    image: lerndevops/mongo
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.labels.role==db
+      restart_policy:
+        condition: on-failure
+    ports:
+      - "27017:27017"
+    networks:
+      - myappnet
+    volumes:
+      - data:/data/db
+      - data-bkp:/data/bkp
+
+docker stack deploy -c javapp.yml javaapp
+
+docker node update instance-jenkins --label-add role=app (update worker node)
+
+ 352  vi wordpress.yml
+  353  clear
+  354  docker stack deploy -c wordpress.yml wordpress
+  355  docker service ls
+  356  cat wordpress.yml
+  357  clear
+  358  vi javapp.yml
+  359  clear
+  360  cat javapp.yml
+  361  clear
+  362  docker service ls
+  363  docker stack rm wordpress
+  364  docker service rm pyapp svcx
+  365  clear
+  366  docker service ls
+  367  docker stack deploy -c javapp.yml javaapp
+  368  vi javapp.yml
+  369  docker stack deploy -c javapp.yml javaapp
+  370  docker stack sl
+  371  docker stack ls
+  372  docker service ls
+  373  docker service ps javaapp_springbootapp
+  374  docker inspect 9y3tzfapwio9
+  375  clear
+  376  docker node ls
+  377  docker node inspect worker01
+  378  clear
+  379  docker inspect 9y3tzfapwio9
+  380  docker ps
+  381  clear
+  382  docker node ls
+  383  docker node update worker01 --label-add role=app
+  384  docker node update worker02 --label-add role=app
+  385  docker node update worker02 --label-add role=db
+  386  docker node inspect worker02  | grep -i A 2 lables
+  387  docker node inspect worker02  | grep -iA 2 labels
+  388  docker node inspect worker02  | grep -iA 3 labels
+  389  docker service ls
+  390  docker service ps javaapp_mongo
+  391  docker service ps javaapp_springbootapp
+  392  cat javapp.yml
+  393  cat wordpress.yml
+  394  docker node update worker02 --label-add env=qa
+  395  docker node inspect worker02  | grep -iA 3 labels
+  396  docker node inspect master
+  397  vi javapp.yml
+  398  clear
+  399  docker service  ls
+  400  docker network ls
+
+
+==================================================================================
+
+ 400  docker network ls
+  401  docker network create --name myoverlay --driver overlay
+  402  docker network create myoverlay --driver overlay
+  403  docker network ls
+  404  docker network inspect myoverlay
+  405  docker network inspect javaapp_myappnet
+  406  clear
+  407  docker service ls
+  408  docker service inspect javaapp_springbootapp
+  409  clear
+  410  docker service create test --replicas 3 lerndevops/samples:netshoot
+  411  docker pull lerndevops/samples:netshoot
+  412  docker service ls
+  413  docker service create --name test --replicas 3 --network myoverlay lerndevops/samples:netshoot
+  414  docker service ls
+  415  docker service ps test
+  416  docker ps
+  417  docker exec 0ef648c23af0 ifconfig
+  418  clear
+  419  history
+  420  clear
+  421  docker version
+  422  ps -ef|grep dockerd
+  423  systemctl status docker
+  424  vi /lib/systemd/system/docker.service
+  425  ls -ltrh /usr/bin/dockerd
+  426  vi /lib/systemd/system/docker.service
+  427  clear
+  428  cat /lib/systemd/system/docker.service
+  429  systemctl daemon-reload
+  430  systemctl restart docker
+  431  docker version
+  432  docker ps
+  433  docker image ls
+  434  clear
+  435  ps -ef|grep dockerd
+  436  apt remove docker-ce-cli
+  437  docker -v
+  438  ps -ef|grep dockerd
+  439  apt install docker-ce-cli
+  440  clear
+  441  docker ps
+  442  systemctl restart docker
+  443  apt install docker-ce-cli docker-ce
+  444  clear
+  445  systemctl restart docker
+  446  journalctl -xeu docker.service
+  447  clear
+  448  apt install docker-ce-cli docker-ce
+  449  clear
+  450  systemctl status docker
+  451  vi /lib/systemd/system/docker.service
+  452  systemctl daemon-reload
+  453  systemctl restart docker
+  454  journalctl -xeu docker.service | less
+  455  systemctl restart docker
+  456  clear
+  457  docker info
+  458  systemctl restart docker
+  459  journalctl -xu docker.service | less
+  460  vi /lib/systemd/system/docker.service
+  461  clear
+  462  journalctl -xu docker.service | less
+  463  systemctl daemon-reload
+  464  systemctl restart docker
+  465  systemctl status  docker
+  466  docker info
+  467  clear
+  468  docker swarm leave --force
+  469  docker swarm init
+  470  vi /lib/systemd/system/docker.service
+
+
+  471  systemctl daemon-reload
+  472  systemctl restart docker
+  473  docker swarm init
+====================================================================================
+Enable the docker daemon API to access from outside the VM 
+
+https://github.com/lerndevops/edudca/blob/master/daemon/enable-remote-API.txt 
+
+Remote API Documentation 
+
+https://docs.docker.com/engine/api/ 
+====================================================================================
+to promote worker node as manager
+docker node promote worker1
+
+to remove nodes from cluster
+docker swarm leave -force
+
+to check status
+docekr info | grep -i swarm
+============================================================
+to add manager node directly
+docker swarm join-token manager
+ 
+similarly docker manager join-token worker
+
+

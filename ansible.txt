@@ -1,0 +1,479 @@
+https://raw.githubusercontent.com/lerndevops/labs/master/scripts/setupUser.sh
+
+vi config ===>host_keys_      =False
+
+ansible --inventory /etc/ansible/hosts all -m ping -u devops --ask-pass
+ansible --inventory /etc/ansible/hosts all  -m shell -a "df -h/" -u devops --ask-pass
+ansible --inverntory /etc/ansible/hosts all -m shell -a "free -m" -u devops --ask=pass
+========================================================================
+
+ANSIBEL ALLOWS TO AUTOMATE THEIR ENVIRIRNMENT USING TWO WAYS
+1.ad hoc-single command on target server, 
+2.playbooks
+
+-m ->module(ping, shell)
+-a-> "argument" ("free-m",copy, ....)
+-u->user (devops)
+===========================================================================
+copy module
+=> ansible- i hosts all -m copy -a "src=/etc/ansible/ansible.cfg dest=/tmp"
+
+file module
+==> ansible -i hosts all -m file -a "path=/tmp/today.txt state=touch"
+
+to check created file
+
+ansible -i hosts all -m shell -a "ls -l /tmp"
+====================================================
+how to find out predefined modules ?
+we have 3k+ modules-fyi
+ansible-doc -l
+ansible-doc -l | grep (anything ,copy, file....)
+
+google ansible modules
+=====================================================
+
+if no inventory given(hosts) in command by default it will take default command 
+=====================================================
+inventory costomaisation
+
+cp hosts myinv
+ansible -i /etc/ansible/myinv all -m shell -a "ls -l /tmp"
+
+also can change default inventory 
+go to vi ansible.cfg and change inventory hosts to myinv
+
+cp myinv devinv
+cp myinv qainv
+cp myinv prodinv
+============================================================
+in myinv ican crete groups 
+[webservers]
+public ipaddress ansible_user=devops ansible_ssh_pass=today@1234
+[app]
+private ipaddress
+[db]
+dns values
+
+test: ansible -i myinv all -m shell -a "hostname"
+
+if i want to check only app group status then 
+test: ansible -i myinv app -m shell -a "hostname"
+
+calling multitple groups
+test: ansible -i myinv app,web -m shell -a "hostname"
+
+
+limiting the execution on limited servers on any group
+test: ansible -i myinv app,web -m shell -a "hostname" --limit serverip
+
+==============================================================
+
+[dev:childern]
+web
+app
+db
+------------->keeping groups in group
+command: ansible -i myinv dev -m shell -a "hostname" --limit "web" ---> run only web
+         ansible -i myinv dev -m shell -a "hostname" --limit "!web" ---> exclude web
+=============================================================================
+copy ansible.cfg , myinv to /home/devops(devops user) not working as root user
+ansible --version
+=============================================================================
+ansible file location
+defalult ==/etc/ansible
+current one == /home/devops (current directory takes the high priority)
+===============================================================================
+password protection:
+previously ansible_user=devops. ansible_ssh_pass=today@1234...
+new method:
+ssh method: ssh-keygen 
+            #it generetes rsa, rsa.pub keys
+            # copy those files in to target servers 
+            ssh-copy-id devops@ipaddress 
+================================================================================
+apt command
+ansible -i myinv web -m apt -a "update_cache=yes"
+to get root user permission we use -b (become root user)
+ansible -i myinv web -m copy -a "path=/home/devops/myinv dest=/opt" -b
+
+check how to setup windows and its conenction in git hub
+================================================================================
+ ansible palybooks:is script helps us to implement series of tasks on group of servers
+ansible playbooks uses yaml (.yaml or .yml)
+ 
+yaml : 3 data structures
+scalars, dictornary/mapping, list/arrey
+
+scalars
+abuc.yml
+key: value pairs
+
+dictionary/mapping
+abc.yml
+laptop:
+  ram: 4Gi
+  cpu: 3core
+  dis: 512gb
+
+list/arrey
+abc.yml
+- bread
+- milk
+- noodles 
+=========================================================================
+--- denotes starting of yml file
+... denotes end of yml file
+#commenting
+=========================================================================
+in yaml file 100% keys are predefined
+in yaml file 90% of the time we write the valuues
+10% chances where both key,value are predefined 
+======================================================================
+task
+- is a single change to be implemented on remote server
+- we use ansible pre defined modules to implement a change on remote servers
+- single ansible pre defined module = single task on remote servers
+play
+- list/ group of tasks we want to to implement on group of remote servers
+- list of tasks can be written using the multiple ansible pre defined values
+- list/group of servers from inventory file thta we prepare 
+
+playbook
+  - is a script /yml file with list of plays 
+  - playbook must have one play
+==========================================================================
+playbook.yml
+- name: play1
+  hosts: app
+ #become: yes (optional)
+  tasks: 
+    - name: task1-copy-file
+      copy: 
+        src:/home/devops/ansible.cfg #always the controller machine
+        dest:/tmp                    # always the remote machine
+    - name: task2-file
+      file:  #file can be used to create both files& directory
+         path: /tmp/today
+         state:directory
+      
+- name: play2
+  hosts: dev
+  tasks: 
+    - name: task1-copy-file
+      copy: 
+        src:/home/devops/myinv #always the controller machine
+        dest:/tmp                    # always the remote machine
+    - name: task2-file
+      file:  #file can be used to create both files& directory
+         path: /tmp/tomorrow
+         state:directory
+====================================================================
+to fix indentation in vim
+echo "set paste" > $home/.vimrc
+====================================================================
+to run ansible play book
+ansible-playbook --i myinv first-playbook.yml
+=====================================================================
+gather_facts: no,
+ansible -i myinv ip -m setup
+
+=====================================================================
+in variable.yml file
+changing state present to "{{actionn}}"
+ansible-playbook -i myinv variable.yml --extra-vars "actionn=present"
+ansible-playbook -i myinv variable.yml --extra-vars "actionn=absent"
+
+present=install absent=uninstall
+
+=====================================================================
+variable.yml
+
+- name: variables
+  hosts: app
+  become: yes
+  tasks:
+    - name: install vim on ubuntu
+      when: ansible_distribution == "Ubuntu"
+      apt:
+        name: vim
+        state: "{{actionn}}"
+        update_cache: yes
+    - name: install vim on Amazon
+      when: ansible_distribution == "Amazon"
+      yum:
+        name: vim
+        state: "{{actionn}}"
+        update_cache: yes
+command: ansible-playbook -i myinv variable.yml --extra-vars "actionn=present"
+--extra-vars ====> for assigning variable values while runtime (present, absent)
+--check ====> check run result before deploying to the remote servers
+===========================================================================
+adding naresh user like devops user and giving root permissions
+1. useradd naresh -m -d /home/naresh
+2. id naresh
+3.goto devops root su - naresh
+4. vi /etc/sudoers
+   add 
+   naresh ALL=(ALL:ALL) ALL
+   SETTING PASSWD
+   passwd naresh 
+   enter password 
+when tring to acess naresh@ip and switching ro rooot user it still asks pass 
+which means not every user becomes root user
+jst try : naresh ALL=(ALL) NOPASSWD: ALL
+===================================================================================
+ excuting ansible-playbook as naresh user
+ansible-playbook -i myinv tomcat.yml -u naresh --ask-pass 
+in all remote servers make naresh as root user
+still it asks for sudo pass then  try this command --ask-become-pass
+ansible-playbook -i myinv tomcat.yml -u naresh --ask-pass --ask-become-pass
+
+shortcuts
+-k ==> --ask-pass
+-K(cap) ==> --ask-become-pass
+-e ==> --extra-vars     
+===================================================================================
+if yml files grows bigger and bigger its difficult to do trobble shoot so
+we user option "imprt_tasks"   (moduler concept)
+
+- hosts: app
+  become: yes
+  tasks:
+  - improt_tasks: install-docker-ubuntu.yml     (find it in aansible github)
+    when: ansible_distribution == "Ubuntu"
+  - inport_tasks: install-docker-amazon.yml     (find it in aansible github)
+    when: ansible_distribution == "Amazon"
+====================================================================================
+tasks: run by default when we run the playbook
+
+handlers: tasks written unders handlers section need to be called with notify statement inside the tasks then only they will execute otherwise they will never run
+
+handlers:
+ - name: restart apache
+   when: ansible_distribution == "Ubuntu"
+   service:
+     name: apache2
+     state: started  
+====================================================================================loops: usufull to execute repeaated tasks
+
+regular method to install packages:
+- name: install packages
+  hosts: app
+  tasks:
+   - name: install vim
+     apt: 
+      name: vim
+      state: present
+      update_cache: yes
+   - name: install ntp
+     apt:
+      name: ntp
+      state: present
+      update_chache: yes 
+
+ #using loop:
+   - name: install multiple packages
+     when: ansible_distribution == "Ubuntu"
+     apt:
+      name: "{{ item }}"
+      state: present
+     loop:
+       - vim
+       - ntp
+       -apache2
+#using loop if ansible version is lessthan 2.5
+   - name: install multiple packages
+     when: ansible_distribution == "Ubuntu"
+     apt:
+      name: "{{ item }}"
+      state: present
+     with_items:
+       - vim
+       - ntp
+       -apache2
+====================================================================================
+requirement 
+-execute only specific task(s) from all tasks under tasks sections
+ans: ansible tags 
+ansible-playbook -i myinv palybook.yml --tags all or --tags "tag1. tag2" or 
+--skip-tags "tag3, tag4"
+or
+--tags tagged or --tag untagged
+
+in yml we write in this format
+tags:
+ - install
+ ====================================================================================
+template: uses jinja2 templating language
+ vi example.j2
+the-value-of-variable1: {{ variable1 }}
+the-value-of-variable2: {{ variable2 }}
+hostname: {{ ansible_hostname }}
+
+in remote server its shows like:
+the-value-of-variable1: hello
+the-value-of-variable2: my first palybook using template
+hostname: ip-172-31-13-161
+
+ansible play book:
+- hosts: app
+  become: yes
+  vars:
+    variable1: "hello"
+    variable2: "my first palybook using template"
+  tasks:
+    - name: basic template example
+      template:
+       src: /home/devops/example.j2
+       dest: /opt/output.txt
+====================================================================================
+ansible roles:
+
+-is a framework given by ansible to write a reusable /modular automation
+-is a mechanism allows you to break the playbook into smaller yaml files
+- role is a collection/ role consist set of tasks/vars/handlers/files/templates
+-roles can be stored into a version control to manage them in a better way
+-we will call   the roles inside the palybooks
+
+ansible-galaxy role search --help
+
+inside the galaxy repository roles are stored in the format of namespace.automation-name
+ex: leaddevops.tomcat 
+namespace is github name.
+====================================================================================
+role has pre-defined directory strcuture
+roles
+---git
+    -- defaults
+         - main.yml   # user_action=install 
+    -- tasks
+         -main.yml
+         -install     #(install-git-ubuntu-linux.yml, amazon, .....)
+         -uninstall
+    -- vars
+         - main.yml   #user_action=uninstall
+### if vars and deflauts directories statments are contradictory then it always choose Vars.
+
+imp: variable precedence is always command line > vars dir> defaults dir > maim.yml
+
+  meta : is for storing information (galaxy, namespace, platform)  
+
+https://dlcdn.apache.org/tomcat/tomcat-9/v9.0.68/bin/apache-tomcat-9.0.68.tar.gz
+
+===================================================================================
+prepare-host.yml
+- name: install softweres
+  become: yes
+  hosts: app
+  # we need to call roles inside the playbook
+  roles:    # calling role at play level
+   - git
+   - jdk
+   - tomcat
+   - jenkins
+------------------------------------------------------------------------------------
+Ansible Vault: (locker) enables encrypt sensitive data
+
+to create 
+ansible-vault create text.yml
+to encrypt alredy existing file 
+ansible-vault encrypt loops.yml
+to decrypt the encrypted file 
+ansible-vault decrypt loops.yml
+(format AES256)
+To see content in the file 
+ansible-vault view loops.yml
+to edit encrypted file
+ansible-vault edit loops.yml
+change passwd
+ansible-vault rekey loops.yml (make sure previous pass known)
+
+before ansible2.4 version
+(to run encrypted file cli method:
+ansible-playbook --ask-vault-pass loops.yml
+to specify in txt file txt method:
+ansible-playbook --vault-password-file .vaultpass.txt loops.yml
+3rd method 
+mention it in ansible.cfg file
+vault_password_file=/home/devops/.vaultpass
+====================================================================================
+since ansible2.4
+1st method
+ansible-palybook --vault-id @prompt loops.yml
+2nd method
+ansible-palybook --vault-id /path/to/my/vault-password-file loops.yml
+====================================================================================
+IaC:INFRASTRUCTURE AS CODE
+aws
+aws ec2 describe-instances --output table
+
+my ec2 data
+- name: Create EC2 Instance
+  hosts: localhost
+  gather_facts: no
+  tasks:
+    - ec2:
+        key_name: Practice
+        instance_type: t2.micro
+        image: ami-062df10d14676e201
+        wait: yes
+        group: launch-wizard-6
+        count: 1
+        vpc_subnet_id: subnet-07a74290e32aa065e
+        assign_public_ip: yes
+        region: ap-south-1
+      register: ec2
+
+   - ec2_tag:
+       resource: "{{item.id}}"
+       tags:
+        name: "hello"
+     loop: "{{ec2.instances}}"
+
+===================================================================================
+terrafororm:
+install terraform , for github
+sudo curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
+sudo apt-get update && sudo apt-get install terraform
+
+Verify  :  terraform --version
+
+mkdir terracode
+
+create provider block: help us to connect to cloud
+vi provider.tf 
+provider "aws" {
+   access_key = "AKIA4R757VC4IDTFXX5N"
+   secret_key = "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"
+   region = "ap-south-1"
+}
+provider "google" {
+}
+provider "azurerm" {
+}
+====================================================================================
+resource block: to help create any resource on any cloud
+ec2.tf
+resource "aws_instance" "devinstance" {
+        count = 2
+        instance_type = "t2.micro"
+        ami = "ami-062df10d14676e201"
+        key_name = "Practice"
+        tags = {
+                name = "devinstnace"
+                enc = "dev"
+        }
+
+}
+====================================================================================
+terraform plan > dry run
+terraform apply > actual
+terraform destroy
+regisrty.terraform.io <== we get all info abt providers info 
+terraform.tfstate stores all the data
+terraform state list 
+terraform state show
+to destroy specific target then
+terraform destroy -target aws_instance

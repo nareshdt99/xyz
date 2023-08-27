@@ -1,0 +1,136 @@
+https://raw.githubusercontent.com/lerndevops/labs/master/scripts/setupUser.sh
+
+
+kubeadm join 10.182.0.7:6443 --token 26u5vl.1x3rglti7bkfukve \
+        --discovery-token-ca-cert-hash sha256:ed65c8e99f6206db329064eb4dac95ef9aeca942d94924a3dd633d6bfa58bf5f
+
+kubectl api-resources
+
+can you show cloud contoller manager if time permits 
+
+kubeadm join 10.128.0.2:6443 --token 81428g.o1xje0ju6cihfh8b \
+        --discovery-token-ca-cert-hash sha256:6eb205990c21168fcfa7151368d977f1ccad17be952e4d471a81551b3b8485a2
+
+install java new 11 version
+sudo apt-get install openjdk-11-jdk
+
+git --version
+
+JAVA_HOME = /usr/lib/jvm/java-11-openjdk-amd64
+MAVEN_HOME = /opt/apache-maven-3.6.3
+JENKINS-HOME = /var/lib/jenkins
+
+sudo echo "MAVEN_HOME=\"/opt/apache-maven-3.8.6\"" >> /etc/profile
+sudo echo "JAVA_HOME=\"/usr/lib/jvm/java-11-openjdk-amd64\"" >> /etc/profile
+sudo echo "PATH=\$JAVA_HOME/bin:\$MAVEN_HOME/bin:\$PATH" >> /etc/profile
+source /etc/profile
+
+pmd: program mistake detector
+
+pectclinic git hub link: https://github.com/lerndevops/PetClinic
+
+cp /var/lib/jenkins/workspace/package/target/petclinic.war /opt/apache-tomcat-9.0.48/webapps
+
+https://downloads.apache.org/tomcat/tomcat-10/v10.0.23/bin/apache-tomcat-10.0.23.tar.gz
+
+https://downloads.apache.org/tomcat/tomcat-10/v10.0.23/bin/
+
+image: package that consist of all run time dependecies but not envirornmental specific config data
+
+https://github.com/lerndevops/samplejavaapp
+
+https://github.com/lerndevops/DevOpsClassCodes
+
+https://github.com/lerndevops/petclinic
+
+https://github.com/sofastack/sofa-rpc-boot-projects
+
+/usr/lib/jvm/java-11-openjdk-amd64
+
+/opt/apache-maven-3.8.6
+
+
+/root/.jenkins/workspace/package/target
+
+plugins:
+
+1.webhooks on github => to automate the process after code change in sourcecode 
+
+2.pollscm: cron schedule
+  24 hours format
+ minutes(0-59) hours(00-23) days (1-31) month (1-12) day of the week (0-7) 0=sunday 
+      59          11           16           9           5
+todays time and date (16/09/2022, 11:59)
+
+to trigger every 5 mins 
+*/5 , 
+to trigger frequent intervals 
+5,7,9,25,etc.....
+to provide range 
+15-25
+poll scm schedues the build if there is a change in github sourcecode
+
+security:
+jenkins console security 
+plugin:active directory 
+
+dpkg --list | grep jdk (removing java)
+
+Email Extension Template (extension for email notification)
+
+shell-script :
+##for controller /usr/share/maven for agent /opt/maven
+============================================================================
+----
+cd /tmp
+if [ -d /tmp/PetClinic ]; then
+   echo "Petclinic is alredy exist"
+   cd /tmp/PetClinic ; git pull
+else 
+   cd /tmp ; git clone https://github.com/nareshdt99/PetClinic
+fi
+  cd /tmp/PetClinic ; /opt/maven/bin/mvn compile     
+  apt-get update
+  apt-get install -y apache2
+....
+============================================================================
+accessing tomcat gui
+plug in 
+1.deploy
+2.monitoring
+
+
+/opt/tomcat/conf/vi tomcat-user.xml
+/opt/tomcat/webapps/manager/ META-INF /vi context.xml
+allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" /> replace to allow="^.*$">
+
+pipeline sequential order,
+post {
+  success{    =======> if one build gets fail it wont allows for next step (sequentialorder)
+ }
+}
+
+pipeline parallel order,
+
+
+pybuilder 
+
+Install Python & Pybuilder on Ubuntu 
+
+apt-get update 
+apt-get install -y python3 
+apt-get install -y python3-pip
+pip install pybuilder
+pyb version 
+
+git clone https://github.com/nareshdt99/samplepyapp
+
+pyb compile_sources
+
+chown jenkins:jenkins -R projectname
+
+PLUGIN:
+THE BACKUP
+
+pulgin:build with parameter
+

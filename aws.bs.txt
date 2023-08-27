@@ -1,0 +1,8 @@
+elastic beanstalk
+
+https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install-virtualenv.html
+
+https://aws.amazon.com/premiumsupport/knowledge-center/elastic-beanstalk-https-configuration/
+
+https://github.com/SimplyLearner/cloud-devops
+

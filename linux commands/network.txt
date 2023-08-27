@@ -1,0 +1,22 @@
+network
+
+website is group of web pages
+
+create  website
+1.launch server 2.install web package 3.webpage 4.start service
+
+linux commands to create website 
+
+1. sudo su -
+2. yum update -y
+3. yum install httpd -y  (web package name is httpd) deamon
+4. cd /var/www/html
+5. echo "mygoogle" > index.html
+6. ls
+7. service httpd start
+8. chkconfig httpd on 
+
+need to open http port to access 
+
+
+

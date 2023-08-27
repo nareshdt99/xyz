@@ -1,0 +1,464 @@
+
+   63  rm newfile
+   64  ls
+   65  pwd
+   66  whoami
+   67  nano newfile
+   68  grep d newfile
+   69  grep d newfile -c
+   70  grep d newfile -v
+   71  grep d newfile -n
+   72  ls
+   73  pwd
+   74  nano am
+   75  ls
+   76  ls -l
+   77  ls -ls
+   78  cat am
+   79  cat fb
+   80  cat newfile
+   81  grap newfile
+   82  grap newfile -n
+   83  grap b newfile -n
+   84  ls
+   85  grap f newfile
+   86  grap f newfile -n
+   87  grap f newfile -c
+   88  cd ..
+   89  grap f newfile
+   90  cd
+   91  history
+system management commands
+useradd naresh
+userdel naresh
+cat /etc/passwd
+
+groupadd name
+cat /etc/ group
+
+usermod -G klm naresh
+
+ls-al
+-rw-rw-r-- 1 ubuntu ubuntu   64 Mar  3 18:34 newfile
+
+r-read, w-write,x-execute ,a-all,o-other,u-owner, g- group, ch(change in command) mod(modify) 
+
+chmod o+w newfile gives write permissions to the user 
+
+sudo chown 
+
+free ,free-m
+ip add,  
+
+sudo apt install openjdk-11-jdk
+
+mysricpt.sh
+(date , echo hello $(whoami)
+chmod (given access for execuation)
+or 
+bash myscript.sh
+
+cli-command line interface
+gui- graphic user interface 
+
+why only linux
+1. free
+2.secure a.hacking, b.virus
+3.less resources (cli) not cli+gui
+4. multi user, multi tasking
+
+hierarchy
+/(slash) called top level root directory
+win             linex
+folder         directory
+file           file
+administrater  root user
+softwere       package
+\			/
+ prog, win ,
+user,files		lower hierachy types -root,home,boot,etc,vso, bin,vbin
+
+linux commands,
+to switch to root user -  sudo su - 
+
+creating file
+
+1.cat- cat > filename (exit ctrl+d), to add extra content cat >> file1, to see content cat file1
+
+2.touch- to create empty file , used for test purpose. touch filea fileb filec( tocreate multiple files at once)
+
+3.nano - nano file3, (exit ctrl+x, y/n) to addextra content to file repeat same process (no changes in it)
+
+4.vi/vim - vi file4 , then press i(insert mode), enter data then esc:wq! key 
+
+advantages/dis:
+1.cat- cant edit only add or over ride data,/( used for reading content) 
+2.touch- create empty files
+3.nano & vi/vim - editing tools 
+
+
+creating directories 
+
+1. mkdir - to create directory 
+
+hide files: need to keep dot(.) ahead of file name 
+ex: cat > .testfile1
+to view hidden files use: ls -al or ls -atl
+
+to create directories side by side: mkdir dir1 dir2 dir3
+to create directories one insde other : makdir -p dirx/diry/dirz
+to get in to dirx need to use :cd dirx
+pwd - present working directory (shows the location of directory)
+to reach dirz directly from dirx need to use :cd dirx/diry/dirz
+
+to reach dirx directly form dirz need to use :cd ../../..
+
+copy command
+cp source destination 
+ex: cp file1 dir1 (for moving file in to the directory)
+ex: cp -r dir4 dir1 (for mving dir in to directory ) use recursive function (-r)
+
+move command
+mv source destination 
+ex: mv file1 dir1 (for moving file in to the directory)
+ex: mv dir4 dir1 (for moving dir in to the directory) no need of recursive function 
+
+rename command
+ex: mv file1 fileabc ( file1 name changed to fileabc) (here destination is undefined so name changes as per destination)
+
+delete command 
+1.ex:rm filename
+2.ex:rmdir dir
+3.ex: rm -f file/dir
+4. ex: rm -rf file/dir
+mostly used and universal (rm -rf) r-recursive f-forcefully
+
+installing tree: yum install tree -y , and history 
+
+session2
+path 
+lets say 2 directories dir1 dir2 , need to create file1 inside directory , 
+method1: traditional method :go to dir1 (dc dir1)then crete testfile using (cat,touch,nano,vi)
+method2; touch dir1/testfile.
+lets day dirz is inside diry, diry inside dirx then
+ex: touch dirx/diry/dirz testfile 
+
+to view cretared file :ls dirx/diry/dirz/testfile
+
+to add content to file : cat > dirx/diry/dirz/testfile
+
+to copy content to dir :cp tesfilex dirx/diry/dirz (to copy testfilex which is in other diretory to dirz directory)
+
+to copy file in one directory to onother directory :cp dir1/testfile dirx/diry/dirz   (then testfile copies to dirz)
+
+same process to go backwards 
+ex:dirx/diry/dirz, we are in dirz , but need to crete file in dirx, then
+touch ../../filex (bootm to top)
+touch /root/dirx/filex (top to bottom)
+
+/ contains (root, home, etc,temp,....) , then
+ls gives visibility of files in root directory (dir1,dir2 or file2,file3,...)
+ls / gives visiblity of all directories (root, home, etc,temp,....)
+
+if want to create newfile in home then
+to create: touch /home/newfile
+to view: ls /home
+to remove: rm -rf /home/newfile
+
+if there exist passwd file in etc directory then how to check its content 
+cat /etc/passwd
+
+grep  concept  (global regular expression print)
+grep is used to find specific word, no of words in given content 
+ex: there exist passwd file in etc directory , now task is to find specifiword (say root)in given file , 
+since we are in root folder follow below commands
+grep root /etc/passwd (grep specificword file location or path)
+
+less, more commands (purpose to read file) to exit need to press "q" key
+
+head,tail commands (purpose to read top or bottom specific no of lines as per requirment) 
+if no of lines hasent given then default line size is 10 , 
+head /etc/passwd
+if to be specific for ex 3 lines thenn
+head -3 /etc/passwd
+
+sort command (dosent modify existing content but sort in periodical manner)
+ex: sort file1
+
+
+extra commands 
+1.hostname 
+2.ifconfig (ip cofig)
+3.hostname -i ( private ip)
+4.cat os -release ( to check os) command :cat /etc/os-release, or cat/etc/os-rele* (* is saviour or all) 
+more ex: cat /etc/*release or cat /etc/*rele*
+
+instalaltion of packages
+1.yum (yellodog updater, modifier)
+ex: yum install tree -y
+ex: yum install httpd -y
+ex :yum install docker -y
+
+update packages
+ex:yum update httpd -y
+
+remove package
+ex; yum remove httpd -y
+
+to check all list of installed packages 
+ex: yum list installed
+
+to verify pakage 
+ex:which pakage name ex:which tree
+
+to start service for some perticular package
+ex:sevice httpd start 
+or
+ex: systemctl start httpd 
+
+to check current status for some perticular package
+ex: service httpd status
+oe
+ex:systemctl status httpd
+
+restart service 
+ex:service httpd reload 
+
+stop service
+ex:service httpd stop
+ex:systemctl stop httpd 
+
+to start service automaticaaly even after restart then
+ex: chkconfig httpd on
+or
+ex:systemctl enable httpd
+
+to stop service automaticaaly even after restart then
+ex:chkconfig httpd off
+or
+ex:systemctl disable httpd
+
+
+redirection command (>)
+can be used for crete file 
+ex: echo"hello" > file3 ( then it creates file3 then drops conent in it (hello))
+to add extra content
+ex:echo"hello" >> file3 
+
+try : sort filex > file3
+
+which command 
+ex:which git
+
+sudo command
+ex: sudo su - then goes to /root (can check with pwd)
+ex: sudo su   then it goes to /home/ec2-user
+
+imp point
+since ec2-user having privilage of root then we can use
+ex:sudo yum install httpd -y (when ever we are in main directory need to use sudo command to get root privilages )
+
+whoami command
+
+find command
+ex1: find -type f (to find all files in current directory)
+ex2: find -type d (to find  directories in current directory)
+ex3: find / -type f (to find all files in top level directory)
+ex4: find / -type d (to find  directories in top level directory)
+ex5: find / -type f -name filename (to find specific file location)
+ex6: find / -type d -name dir name (to find specific directory location) (practice with os-release, passwd)
+
+shortcuts
+
+find / -type f -name file3 ( use up arrow to go for previous commands )
+
+if command is huge ex: cat > iwfhioaseuhbviuoaenhuizscnhiynugsszyusdgnyudsgcuyfg 
+to delete above command it takes lots of time with backspace , to mae it ease use "ctrl+c"
+
+to copy command in linux just select (highlight) it will by auto copes content,
+to paste press right click 
+
+to auto select file/directory from existig file/dir just enter first letter followed by TAB,
+ex :file is myfile then enter m follwed by TAB
+
+
+
+create user
+useradd username 
+ex:useradd naresh
+
+user delete
+ex:userdel naresh
+
+*passwd file contains all user information*
+to check file ex: cat /etc/passwd
+
+create group
+groupadd groupname
+ex:groupadd devops
+to check cat /etc/group,
+
+*if user  created by defalt it cretas group with same name *
+
+
+to add user to group
+ex: gpasswd -a naresh devops
+
+to check cat /etc/group (its shows like devops:x:1003:naresh)
+
+to add mutliple users 
+gpasswd -M naresh,nvidia devops (capital M)
+
+remove user
+gpasswd -d naresh devops
+gpasswd -d naresh,nvidia devops
+
+to login as naresh user instard of ec2-user
+vi /etc/ssh/sshd_config
+need to change passwd authentication:yes
+then esc then:wq! (to exit)
+
+toset passwd to naresh
+ex:passwd naresh (need to enter pass , pass wont be visible)
+
+RESTART :service sshd reload
+
+now login as naresh user (as same as ec-user using public DNS)
+ 
+
+softlink command (shortcut) (redirects the data)
+ex: ln -s file1 softfile1 (-s means soft link) 
+or 
+ex: ln -s /etc/file1 softfile1 (softfile1 creates in current directory )
+
+check ex: cat softfile1
+to find connection ex:ls -l
+
+(if soft file deleted then still can access main file but mailfile deleted then cant access softfie)
+
+ check using ex:ls -l
+
+hard link (data copied) (backup copy)
+ex:ln /etc/file1 hardfile1 or ex:ln (original file) (link file)
+
+zip files
+tar  (to pak directory) (prpose is not to compress but pakage) ex: dirx.tar
+ex:tar -cvf dirx.tar dirx (c-create, v-verbos ,f- forcfully)
+gz (zip) (to compress) ex:dirx.tar.gz
+ex: gzip dirx.tar
+
+
+unzip file
+ex: gunzip dirx.tar.gz
+ex: tar -xvf dirx.tar
+
+yum (install) 
+wget (download)
+
+yum update -y
+
+{file r-read/open
+     w- write
+     x execute
+dir   r- see componets inside dir
+      w- add/del/rename components
+      x- enter inside dir}
+ 
+
+changing permissions 
+method 1: numerical 
+r-4, w-2,x-1
+
+for dir drwx r-x r-x
+         421 401 401 =755
+for file rw- r-- r--
+         42  400 400 =644
+ command :chmod 755 file1 or chmod 644 file1
+
+to change permissions
+comamnd: chmod 755 file1
+
+to make other as root user 
+command : chown hari file1 
+
+to change group
+command : chgrp devops file1
+
+ du -h file1 gives file size
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/drives/c/users/nares/downloads 
+
+
+for windows to make chmod400
+
+icacls.exe key.pem /reset
+icacls.exe key.pem /grant:r "$($env:username):(r)"
+icacls.exe key.pem /inheritance:r
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+
+
+
+  

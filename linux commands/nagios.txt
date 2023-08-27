@@ -1,0 +1,10 @@
+nagios
+
+1. install NRPE( Nagios remote plug-in executor) - plug in
+2. use check-by- ssh plugin (this plug in has to be in remote machine)
+3. libexec folder (where plugin will be strored)
+4. NRPE plugin in nagios server will go to clint by ssh & involve check-by-ssh plugin
+ 
+grouping- servers(host group)
+        -services (service group)
+

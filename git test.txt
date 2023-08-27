@@ -1,0 +1,89 @@
+2.Mike is working on a project and using Git for version control. He wants to add all the file contents to the index. Then in this scenario which of the following command he can use for staging all the changes in her project:
+
+Less 
+Options
+
+git commit
+git push -m "Add all"
+git add
+git commit add
+
+5.Alice is working on a remote repository using Git. She wants to fetch the specified remote's copy of the current branch and immediately merge it into the local copy. Then in th...
+
+More 
+Options
+
+git fetch <remote> <branch>
+git pull <remote>
+git remote add
+git push <remote> <branch>
+
+7.Mike is working on Git. He wants to reset the staging area and working directory to match the most recent commit. Then in this scenario which of the following command he can us...
+
+More 
+Options
+
+git reset
+git reset --hard
+git reset head
+None of these
+
+8.You have stored the changes made to a file in the benchmarks.rb file. Which of the following Git commands is used to undo the changes?
+
+Options
+
+git reset-- benchmarks.rb
+git undo-- benchmarks.rb
+git checkout -- benchmarks.rb
+None of these
+
+10.You have created a new Git directory and performed the first commit operation by using the git commit -m "First Commit" command. What is the significance of the b6bd481 string ...
+
+More 
+Options
+
+It denotes a unique name that is allocated to the commit operation.
+It denotes a randomly-generated string to show that the commit operation has been successfully performed.
+It denotes a hash of the commit operation.
+None of these
+
+12.Mike is working on a project using Git. He wants to move a file from source to destination. Then in this scenario which of the following statements are correct about git mv:
+
+Statements
+
+git-mv can only move a file, a directory, or a symlink.
+The index is updated before moving the file.
+It updates the index for both old and new paths automatically.
+--force will force moving a file even if the target doesn't exist.
+Less 
+Options
+
+1 and 2
+2 and 3
+3 and 4
+Only 3
+
+18.In Git, you have submitted a project for revision control. Which of the following Git commands is used to record the contents of all the files under the current directory?...
+
+More 
+Options
+
+$ git add
+$ git commit
+$ git take
+$ git snap
+
+20.Alice is working on a remote repository in Git. She wants to find all the information of a particular remote. Then in this scenario which of the following option she can choose...
+
+More 
+Options
+
+git remote show <remote>
+git fetch <remote>
+git remote show -v
+git fetch show <remote>
+
+
+
+
+

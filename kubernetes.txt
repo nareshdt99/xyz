@@ -1,0 +1,513 @@
+https://raw.githubusercontent.com/lerndevops/labs/master/scripts/setupUser.sh
+goto: 
+https://github.com/lerndevops/educka/blob/master/1-intall/install-kubernetes-on-ubuntu-debian.md
+
+at master node :
+---------------
+kubeadm join 10.160.0.2:6443 --token p8djxf.n2v7x7dq14m4e29b \
+        --discovery-token-ca-cert-hash sha256:22fef2910ddf101b68147f47a2e212841cdab85c7bd15a0da58d916e06cd879f
+
+ mkdir -p $HOME/.kube
+  sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+  sudo chown $(id -u):$(id -g) $HOME/.kube/config
+
+docker pull nareshdt99/abctechnologies-1.0
+
+1  sudo su -
+    2  sudo systemctl start jenkins
+    3  sudo systemctl status jenkins
+    4  sudo echo "MAVEN_HOME=\"/opt/apache-maven-3.8.6\"" >> /etc/profile
+    5  sudo su -
+    6  docker run hello-world
+    7  /var/run$ ls -lrth docker.sock
+    8  cd /var/run
+    9  ls -l
+   10  /var/run$ sudo chmod 666 /var/run/docker.sock
+   11  sudo chmod 666 /var/run/docker.sock
+   12  docker run hello-world
+   13  cd
+   14  docker run hello-world
+   15  sudo apt update
+   16  sudo apt upgrade
+   17  clear
+   18  cat /etc/os
+   19  cat /etc
+   20  cat /etc/os-release
+   21  docker -v
+   22  sudo wget https://raw.githubusercontent.com/lerndevops/labs/master/scripts/installK8S-v1-23.sh -P /tmp
+   23  sudo chmod 755 /tmp/installK8S-v1-23.sh
+   24  sudo bash /tmp/installK8S-v1-23.sh
+   25  kubeadm version
+   26  kubeadm version -o short
+   27  kubelet --version
+   28  kubectl version --clint -- short
+   29  kubectl version --clint --short
+   30  kubectl version --client --short
+   31  sudo kubeadm init --ignore-preflight-errors=all
+   32  kubectl get nodes
+   33  kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.24.1/manifests/calico.yaml
+   34  kubectl get nodes
+   35  sudo kubeadm token create --print-join-comman
+   36  sudo kubeadm token create --print-join-command
+   37  kubectl get nodes
+   38  sudo kubeadm token create --print-join-command
+   39  kubectl get nodes
+   40  sudo kubeadm token create --print-join-command
+   41  kubectl get nodes
+   42  kubectl get nodes --output wide
+   43  kubectl run webapp --image=tomcat
+   44  kubectl run testapp --image=nginx
+   45  kubectl describe pod wepapp
+   46  kubectl describe pod webapp
+   47  kubectl get nodes -o wide
+   48  kubectl get pods -o wide
+   49  kubectl run mainpro --image=nareshdt99/abctechnologies-1.0
+   50  kubectl get pods -o wide
+   51  kubectl logs mainpro
+   52  kubectl exec -it webapp -- /bin/bash
+   53  kubectl exec -it mainpro -- /bin/bash
+   54  java -version
+   55  kubectl delete pod testpod
+   56  kubectl get pods -o wide
+   57  kubectl delete pod testapp
+=================================================================================
+-o, overall 
+-n , namespace
+namespaces
+----------
+76  kubectl get podes -o wide
+  
+   78  kubectl get pods -o wide
+   79  kubectl get pods -o wide --namespaces
+   80  kubectl get pods -o wide --all-namespaces
+   81  7kubectl get namespaces
+   82  kubectl get namespaces
+   83  kubectl get pods
+   84  kubectl get nodes
+   85  kubectl get nodes -o wide
+   86  kubectl create namespace teama
+   87  kubectl create namespace teamb
+   88  kubectl create namespace dev
+   89  kubectl create namespace qa
+   90  kubectl get namespaces
+   91  kubectl run pod1 --image=nginx --namespace default
+   92  kubectl run pod1 --image=nginx --namespace teama
+   93  kubectl run pod1 --image=nginx --namespace teamb
+   94  kubectl run pod1 --image=nginx --namespace dev
+   95  kubectl run pod1 --image=nginx --namespace qa
+   96  kubectl run pod1 --image=nginx --namespace prod
+   97  kubectl get pods -o wide
+   98  kubectl get pods -o wide --namespace teama
+   99  kubectl get pods -o wide --namespace qa
+  100  kubectl get pods -o wide --namespace teama
+  101  kubectl get pods -o wide --namespace teamb
+  102  kubectl get pods -o wide --namespace dev
+  103  kubectl delete pod pod1 --namespace teamb
+  104  kubectl get pods --namespace teama
+  105  kubectl get pods --namespace teamb
+  106  kubectl get pods -n teama
+  107  kubectl get pods --all-namespaces
+====================================================================================
+kubectl get pods
+  110  kubectl get pods -o wide
+  111  kubectl describe pod1
+  112  kubectl describe pod pod1
+  113  kubectl get pods -o wide
+  114  kubectl run podx --image=nginx
+  115  kubectl expose pod podx  --type NodePort --port 80 --target-port 80
+  116  kubectl expose pod podx  --type NodePort --port 80 --target-port 80
+  117  kubectl get services
+  118  kubectl expose pod mainpro --type NodePort --port 8080 --target-port 8080
+  119  kubectl get services
+  120  kubectl expose pod mainpro --type NodePort --port 8090 --target-port 8090
+  121  kubectl delete service mainpro
+  122  kubectl expose pod mainpro --type NodePort --port 8090 --target-port 8090
+  123  kubectl get services
+  124  kubectl delete service mainpro
+  125  kubectl expose pod mainpro --type NodePort --port 8080 --target-port 8080
+  126  kubectl get services
+  127  kubectl delete service mainpro
+====================================================================================
+kubectl api-resources
+
+multi.yml
+
+kind: Pod
+apiVersion: v1
+metadata:
+    name: podz
+    namespace: default
+    labels:
+       role: app
+spec:
+  containers:
+          - name: cont1
+            image: nginx
+          - name: cont2
+            image: tomcat
+126  kubectl get services
+  127  kubectl delete service mainpro
+  128  history
+  129  kubectl api-resources
+  130  vim podz.yml
+  131  kubectl apply -f podz.yml
+  132  kubectl get pods -o wide
+  133  cat podz.yml
+  134  vim multi.yml
+  135  kubectl apply -f multi.yml
+  136  cat multi.yml
+  137  vim multi.yml
+  138  kubectl apply -f multi.yml
+  139  kubectl get pods
+  140  kubectl get ndes
+  141  kubectl get nodes
+  142  kubectl get services
+  143  kubectl get pods
+  144  kubectl logs multi-cont-pod -c cont1
+==================================================================================
+ kubectl get pods --show-labels
+  149  vim rs.yml
+  150  cat rs.yml
+  151  kubectl apply -f rs.yml
+  152  kubectl get pods
+  153  kubectl get replicase -o wide
+  154  kubectl get replicaset -o wide
+  155  kubectl get pods --show-labels
+  156  kubectl describe pod pods webapp
+  157  kubectl describe replicaset myapp
+  158  kubectl delete pod myapp
+  159  kubectl get pods
+  160  kubectl delete pod webapp
+  161  kubectl get pods
+  162  kubectl get pods --show-labels
+  163  kubectl get pods -o  wide
+  164  history
+
+rs.yml
+
+kind: ReplicaSet
+apiVersion: apps/v1
+metadata:
+  name: myapp
+  namespace: default
+  #labels  # are optional
+spec:
+  replicas: 3  # if we do not mention the replicas it will create 1 pod / replica & manages it
+  selector:  # it will try to acuquire the pod with the labels mentioned
+    matchLabels:
+      run: webapp
+  template:  ## is the pod definition
+    metadata:
+      #name: initpod2 # kube will create a random name for each pod to keep it unique
+      labels:  # is like a tag # we must assing a label to every pod is mandatory, if we do not apply kube will assing one
+        run: webapp  ## here both key & value are your choice
+    spec:
+      #initContainers:
+      containers:
+       - name: cont1
+         image: nginx
+       - name: cont2
+         image: tomcat
+===================================================================================
+day3:
+kubectl scale replicaset myapp --replicas 6
+
+lerndevops/samples:pyapp-v1
+
+rs.yml
+=====
+kind: ReplicaSet
+apiVersion: apps/v1
+metadata:
+  name: myapp
+  namespace: default
+  #labels  # are optional
+spec:
+  replicas: 3  # if we do not mention the replicas it will create 1 pod / replica & manages it
+  selector:  # it will try to acuquire the pod with the labels mentioned
+    matchLabels:
+      run: webapp
+  template:  ## is the pod definition
+    metadata:
+      #name: initpod2 # kube will create a random name for each pod to keep it unique
+      labels:  # is like a tag # we must assing a label to every pod is mandatory, if we do not apply kube will assing one
+        run: webapp  ## here both key & value are your choice
+    spec:
+      #initContainers:
+      containers:
+       - name: cont1
+         image: lerndevops/samples:pyapp-v1
+
+
+np.yml
+======
+kind: Service
+apiVersion: v1
+metadata:
+  name: myapp
+  namespace: default
+  #labels # are optional
+spec:
+  type: NodePort # kube will create nodeport/hostport & publishes on every node in the cluster & also
+                 # creates an internal virutal load balancer(ClusterIP) maps it to the NodePort/HostPort
+  selector:   # scans the cluster & selects all the pod having the label mentioned
+    run: webapp
+  ports:
+    - port: 80  # kube will map this port to the LB IP created
+      targetPort: 3000 ## this is the port of the app inside the cont always
+
+=================================================================================
+while true; do curl http://34.93.33.101:30496/ ; sleep 1;done;
+
+ vi deployment.yml
+  267  kubectl apply -f deployment.yml
+  268  kubectl get service
+  269  kubectl log kubeserve-svc
+  270  kubectl logs kubeserve-svc
+  271  kubectl logs service kubeserve-svc
+  272  kubectl logs pod kubeserve-svc
+  273  kubectl logs pods kubeserve-svc
+  274  kubectl logs kubeserve-svc
+  275  kubectl get pods
+  276  kubectl logs kubeserve-6dcd44d8bd-6ppj2
+  277  kubectl logs kubeserve-6dcd44d8bd-x4txv
+  278  kubectl logs kubeserve
+  279  kubectl logs rs kubeserve
+  280  kubectl get deployemnt -o wide
+  281  kubectl get deployment -o wide
+  282  kubectl get rs -o wide
+  283  kubectl get pods -o wide
+  284  kubectl delete service myapp
+  285  kubectl delete service logapp
+  286  kubectl delete service pod1
+  287  kubectl get pods -o wide
+  288  kubectl get deployment -o wide
+  289  kubectl get rs -o wide
+  290  kubectl get pods -o wide
+  291  kubectl delete pods myapp
+  292  kubectl get depolyment -o wide -l kubeserve
+  293  kubectl get deployment -o wide -l kubeserve
+  294  kubectl get deployment -o wide -l app=kubeserve
+  295  kubectl get deployment -o wide
+  296  kubectl get pods -o wide -l app=kubeserve
+  297  kubectl delete rs myapp
+  298  kubectl get pods -o wide
+  299  kubectl delete rs logapp
+  300  kubectl get pods -o wide -l app=kubeserve
+  301  vi deployment.yml
+  302  kubectl apply -f deployment.yml
+  303  kubectl rollout status deployment kubeserve
+  304  kubectl rollout undo deployment kubeserve
+  305  kubectl rollout status deployment kubeserve
+  306  kubectl rollout update deployment kubeserve
+  307  kubectl rollout -h
+  308  kubectl rollout history deployment kubeserve
+  309  kubectl apply -f deployment.yml
+  310  kubectl delete deployment --all
+  311  kubectl delete rs --all
+  312  kubectl delete pods --all
+  313  kubectl get pods
+  314  kubectl delete daemonset --all
+  315  kubectl get nodes
+  316  history
+ vi deployment.yml
+------------------
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kubeserve
+spec:
+  replicas: 10
+  minReadySeconds: 45 # wait for 10 sec before pod is ready going to next
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1  # take down 1 pod at a time
+      maxSurge: 2        # bring one at a time
+  selector:
+    matchLabels:
+      app: kubeserve
+  template:
+    metadata:
+      name: kubeserve
+      labels:
+        app: kubeserve
+    spec:
+      containers:
+      - image: leaddevops/kubeserve:v2
+        name: app
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+   name: kubeserve-svc
+spec:
+  type: NodePort
+  selector:
+    app: kubeserve
+  ports:
+    - port: 80
+      targetPort: 80
+====================================================================================
+schedulers
+==========
+1.nodeName: worker1 
+
+2.nodeSelector: 
+to select node we need to label it first
+kubectl label node worker1 role=db
+2.nodeSelector:
+       role=db
+       env=qa   ( its and condition ,node that contains both the labels only can able to deploy )
+
+to delete the label:
+kubectl label node worker1 role-
+====================================================================================
+385  vi nn-dep.yml
+  386  kubectl get nodes
+  387  vi nn-dep.yml
+  388  clear
+  389  kubectl apply -f nn-dep.yml
+  390  kubectl get pods -o wide
+  391  kubectl scale deployment nn-dep --replicas 10
+  392  kubectl get pods -o wide
+  393  kubectl scale deployment nn-dep --replicas 2
+  394  kubectl get pods -o wide
+  395  clear
+  396  kubectl delete deployment --all
+  397  clear
+  398  kubectl get nodes
+  399  kubectl describe node worker01
+  400  clear
+  401  kubectl get nodes
+  402  kubectl label node worker01 role=db
+  403  kubectl label node worker02 role=db
+  404  kubectl label node worker02 env=qa
+  405  kubectl label node worker01 env=dev
+  406  kubectl describe node worker01 | grep -iA 8 labels
+  407  kubectl describe node worker02 | grep -iA 8 labels
+  408  cp nn-dep.yml ns-dep.yml
+  409  vi ns-dep.yml
+  410  clear
+  411  kubectl apply -f ns-dep.yml
+  412  kubectl get pods -o wide
+  413  kubectl scale deployment ns-dep --replicas 20
+  414  kubectl get pods -o wide
+  415  kubectl scale deployment ns-dep --replicas 2
+  416  kubectl get pods -o wide
+  417  history
+  418  cat ns-dep.yml
+  419  kubectl label node worker02 env-  # this will delete the label having env key init
+  420  kubectl label node worker01 env-  # this will delete the label having env key init
+  421  kubectl label node worker01 role-  # this will delete the label having env key init
+  422  kubectl label node worker02 role-  # this will delete the label having env key init
+  423  kubectl get pods -o wide
+  424  kubectl scale deployment ns-dep --replicas 4
+  425  kubectl get pods -o wide
+  426  kubectl describe pod ns-dep-78c4447f66-28rsk
+  427  kubectl get pods -o wide
+  428  clear
+  429  kubectl get nodes -o wide
+  430  clear
+  431  kubectl get nodes
+  432  kubectl describe node master
+  433  clear
+  434  kubectl describe node master |grep -i taints
+  435  kubectl describe node worker01 |grep -i taints
+  436  kubectl describe node worker02 |grep -i taints
+  437  kubectl taint node master role=master:NoSchedule
+  438  kubectl describe node master |grep -i taints
+  439  kubectl taint node worker01 covidblock:NoSchedule
+  440  kubectl taint node worker02 covidblock:NoSchedule
+  441  kubectl get pods
+  442  ls
+  443  kubectl apply -f rs.yml
+  444  kubectl get pods -o wide
+  445  kubectl describe pod myapp-8gvph
+  446  cat rs.yml
+  447  cat deployment.yml
+  448  cat nn-dep.yml
+  449  kubectl describe node worker02 |grep -i taints
+  450  clear
+  451  vi tt-dep1.yml
+  452  clear
+  453  kubectl apply -f tt-dep1.yml
+  454  kubectl get pods -o wide
+  455  kubectl taint node worker01 covidblock:NoExecute
+  456  kubectl taint node worker02 covidblock:NoExecute
+  457  kubectl get pods -o wide
+  458  kubectl describe node worker02 |grep -i taints
+  459  kubectl describe node worker02 |grep -iA 1 taints
+  460  vi tt-dep2.yml
+  461  clear
+  462  kubectl apply -f tt-dep2.yml
+  463  vi tt-dep2.yml
+  464  clear
+  465  kubectl apply -f tt-dep2.yml
+  466  kubectl get pods -o wide
+  467  kubectl taint node worker01 covidblock:NoExecute-  ## this will delete the taint on the node
+  468  kubectl taint node worker02 covidblock:NoExecute-  ## this will delete the taint on the node
+  469  kubectl taint node worker02 covidblock:NoSchedule-  ## this will delete the taint on the node
+  470  kubectl taint node worker01 covidblock:NoSchedule-  ## this will delete the taint on the node
+  471  kubectl get pods -o wide
+  472  kubectl delete deployment --all
+  473  kubectl describe node worker01
+  474  clear
+  475  vi lp-dep.yml
+  476  clear
+  477  kubectl apply -f lp-dep.yml
+  478  kubectl get deployment
+  479  kubectl get pods -o wide
+  480  kubectl describe pod tt-dep2-798cf9885f-7xshk
+  481  kubectl get pods -o wide
+  482  clear
+  483  kubectl delete all --al
+  484  kubectl delete all --all
+  485  clear
+  486  vi rp-dep.yml
+  487  clear
+  488  kubectl apply -f rp-dep.yml
+  489  kubectl get pods -o wide
+  490  kubectl describe pod rp-dep-7fc4db564f-2n8nr
+  491  clear
+  492  kubectl get pods -o wide
+  493  kubectl get services -o wide
+  494  kubectl describe service sv1
+  495  vi rp-dep.yml
+  496  clear
+  497  kubectl apply -f rp-dep.yml
+  498  kubectl get pods -o wide
+  499  kubectl describe pod rp-dep-7cb9bd6f65-brrxp
+  500  kubectl get services
+  501  kubectl describe service sv1
+  502  kubectl get pods -o wide
+root@master:~# cat tt-dep1.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tt-dep1
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kubeserve1
+  template:
+    metadata:
+      labels:
+        app: kubeserve1
+    spec:
+      tolerations:  ## is the key to deploy to pod into a node which has some taints
+       - key: covidblock #covidblock:NoSchedule
+         effect: NoSchedule
+         operator: "Exists" # if the taint is key:effect the operator is always Exists
+                            # if the taint is key=value:effect the operator is always Equal
+      #nodeSelector
+      #nodeName: worker01
+      #initContainers
+      containers:
+      - image: leaddevops/kubeserve:v1
+        name: app
+===================================================================================
+
+
